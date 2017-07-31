@@ -1,0 +1,75 @@
+<% if @worker_name_invalid %>
+  <h4 class="error-message alert alert-danger"><%= t('invalid_worker_error')%></h4>
+<% end %>
+
+<h3><%= t('blackholed_workers')%></h3>
+
+<form action="<%= root_path %>kill-switches/blackhole_add" method="post" style="margin-bottom: 4px;">
+  <%= csrf_tag %>
+  <input name="worker_name" />
+  <input class="btn btn-danger btn-xs" type="submit" value="<%= t('blackhole')%>" data-confirm="<%= t('are_you_sure')%>" />
+</form>
+
+<div class="table_container">
+  <table class="blackhole-workers table table-hover table-bordered table-striped table-white">
+    <thead>
+      <tr>
+        <th><%= t('class')%></th>
+        <th style="width: 100%;"><%= t('blackholed_at')%></th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @blackhole_workers.each do |worker_name, disabled_at| %>
+        <tr>
+          <td><%= worker_name %></td>
+          <td><%= disabled_at %></td>
+          <td class="text-center">
+            <form action="<%= root_path %>kill-switches/blackhole_remove" method="post">
+              <%= csrf_tag %>
+              <input type="hidden" name="worker_name" value="<%= worker_name %>" />
+              <input class="btn btn-primary btn-xs pull-right" type="submit" value="<%= t('restore')%>" data-confirm="<%= t('restore_worker', worker: worker_name) %>" />
+            </form>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<h3><%= t('dead_queue_workers') %></h3>
+
+<form action="<%= root_path %>kill-switches/dead_queue_add" method="post" style="margin-bottom: 4px;">
+  <%= csrf_tag %>
+  <input name="worker_name" />
+  <input class="btn btn-danger btn-xs" type="submit" value="<%= t('send_to_dead_queue') %>" data-confirm="<%= t('are_you_sure')%>" />
+</form>
+
+<div class="table_container">
+  <table class="dead-queue-workers table table-hover table-bordered table-striped table-white">
+    <thead>
+    <tr>
+      <th><%= t('class')%></th>
+      <th style="width: 100%;"><%= t('dead_queued_at')%></th>
+      <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+      <% @dead_queue_workers.each do |worker_name, disabled_at| %>
+        <tr>
+          <td><%= worker_name %></td>
+          <td><%= disabled_at %></td>
+          <td class="text-center">
+            <form action="<%= root_path %>kill-switches/dead_queue_remove" method="post">
+              <%= csrf_tag %>
+              <input type="hidden" name="worker_name" value="<%= worker_name %>" />
+              <input class="btn btn-primary btn-xs pull-right" type="submit" value="<%= t('resurrect')%>" data-confirm="<%= t('resurrect_worker', worker: worker_name) %>" />
+            </form>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
