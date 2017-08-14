@@ -1,0 +1,15 @@
+en:
+  kill_switches: Kill Switches
+  blackholed_workers: Blackholed Workers
+  dead_queue_workers: Dead Queue Workers
+  are_you_sure: Are you sure?
+  blackhole: Blackhole
+  disabled_at: Disabled at
+  dead_queued_at: Dead-queued at
+  blackholed_at: Blackholed at
+  send_to_dead_queue: Send to dead queue
+  class: Class
+  kill: Kill
+  resurrect: Resurrect
+  resurrect_worker: Resurrect %{worker}?
+  invalid_worker_error: "Error: Invalid worker name!"
