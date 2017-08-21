@@ -1,4 +1,5 @@
 # Sidekiq::Killswitch
+![Brought to you by Square](https://github.com/square/sidekiq-killswitch/raw/master/examples/square-logo.svg)
 
 ## Description
 
@@ -114,7 +115,7 @@ require 'sidekiq/killswitch/web'
 ## Usage
 
 ### Web UI
-**[TODO: ADD WEB UI SCREENSHOT HERE AFTER UPLOADED ON GITHUB]**
+![Web UI](https://github.com/square/sidekiq-killswitch/raw/master/examples/killswitch-web-ui.png)
 
 `Sidekiq::Killswitch` integrates into Sidekiq Web app. A new tab "Kill Switches" will be added to Sidekiq admin panel
 when you load the extension (see steps above for how to load it).   
