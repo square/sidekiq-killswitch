@@ -26,8 +26,9 @@ RSpec.describe Sidekiq::Killswitch::Middleware::Server do
       it 'should send a job to the morgue' do
         Sidekiq::Killswitch.dead_queue_add_worker(MyWorker)
 
-        job_data = double
-        expect_any_instance_of(Sidekiq::DeadSet).to receive(:kill).with(job_data)
+        job_data = {job: :details}
+        serialized_job = Sidekiq.dump_json(job_data)
+        expect_any_instance_of(Sidekiq::DeadSet).to receive(:kill).with(serialized_job)
 
         expect do
           server_middleware.call(MyWorker.new, job_data, nil) { raise 'Should not run' }
