@@ -4,6 +4,16 @@
 
 <h3><%= t('blackholed_workers')%></h3>
 
+<div class="alert alert-danger" role="alert">
+  <p>Blackholing workers drops instances of these workers when these instances are pushed to the Sidekiq queue or processed (<a
+    href="https://github.com/square/sidekiq-killswitch?tab=readme-ov-file#how-does-it-work" class="alert-link">docs</a>).</p>
+
+  <p>Only blackhole workers that you don't want to retry later! (e.g. cron jobs or jobs you don't care about) You should be able to reach a state
+    of correctness without retrying these workers.</p>
+
+  <p>Use <%= t('dead_queue_workers') %> if you want to retry these jobs later from the dead queue.</p>
+</div>
+
 <form action="<%= root_path %>kill-switches/blackhole_add" method="post" style="margin-bottom: 4px;">
   <%= csrf_tag %>
   <input name="worker_name" />
