@@ -1,3 +1,6 @@
+### 1.1.0 / 2024-07-01
+* Add in warning banner to Sidekiq UI so users are linked to docs and informed of the difference of sending jobs to blackhole vs. dead queue
+
 ### 1.0.0 / 2018-02-20
 * `1.0.0.pre2` released as `1.0.0`.
 
