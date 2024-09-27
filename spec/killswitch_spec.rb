@@ -65,7 +65,7 @@ RSpec.describe Sidekiq::Killswitch do
       Sidekiq::Killswitch.blackhole_remove_worker(worker_name)
 
       Sidekiq::Killswitch.redis_pool do |redis|
-        expect(redis.hexists(Sidekiq::Killswitch::BLACKHOLE_WORKERS_KEY_NAME, worker_name)).to be_falsey
+        expect(redis.hexists(Sidekiq::Killswitch::BLACKHOLE_WORKERS_KEY_NAME, worker_name)).to eq(0)
       end
     end
   end
@@ -113,7 +113,7 @@ RSpec.describe Sidekiq::Killswitch do
       Sidekiq::Killswitch.dead_queue_remove_worker(worker_name)
 
       Sidekiq::Killswitch.redis_pool do |redis|
-        expect(redis.hexists(Sidekiq::Killswitch::DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)).to be_falsey
+        expect(redis.hexists(Sidekiq::Killswitch::DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)).to eq(0)
       end
     end
   end
