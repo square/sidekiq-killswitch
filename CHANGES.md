@@ -1,3 +1,8 @@
+### 1.1.1 / 2024-08-27
+* Support for `redis-client` client (used by Sidekiq 7)
+* Remove `Sidekiq::DeadSet#kill` extension.
+* `module Sidekiq::Killswitch; end` replaced with `module Sidekiq; module Killswitch; ...`. 
+
 ### 1.1.0 / 2024-07-01
 * Add in warning banner to Sidekiq UI so users are linked to docs and informed of the difference of sending jobs to blackhole vs. dead queue
 
