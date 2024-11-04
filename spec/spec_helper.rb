@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 require 'rspec'
 require 'logger'
+require 'rack/test'
 require 'sidekiq/testing'
 require 'sidekiq/killswitch'
 
 ENV['RACK_ENV'] = 'test' # Disable CSRF protection for Sidekiq Web app
+$TESTING = true
 
 Sidekiq::Killswitch.configure do |config|
   config.logger = Logger.new('/dev/null')

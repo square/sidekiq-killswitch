@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 require 'spec_helper'
-require 'rack/test'
 require 'rspec-html-matchers'
 require 'sidekiq/killswitch/web'
 
@@ -9,6 +8,12 @@ RSpec.describe Sidekiq::Killswitch::Web do
   include RSpecHtmlMatchers
 
   let(:app) { Sidekiq::Web }
+
+  before do
+    # Hash is not a real session, but it seems to provide a session-compatible interface,
+    # and we're only using #[] and #delete methods.
+    env "rack.session", {}
+  end
 
   def expect_redirect_to_root_page(response)
     expect(response.status).to be(302)

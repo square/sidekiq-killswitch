@@ -8,7 +8,7 @@ module Sidekiq
           worker_name = Sidekiq::Killswitch.class_to_str(worker_class)
 
           if Killswitch.blackhole_worker?(worker_name)
-            Killswitch.logger.info "#{worker_name} is currently disabled. Job #{job} was not executed."
+            Killswitch.logger.warn "#{worker_name} is currently disabled. Job #{job} was not executed."
             false
           else
             yield
