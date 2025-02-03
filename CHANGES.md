@@ -1,3 +1,6 @@
+### 1.1.2 / 2025-02-03
+* Trim whitespace from worker names when adding / removing from blackhole or dead queue
+
 ### 1.1.1 / 2024-08-27
 * Support for `redis-client` client (used by Sidekiq 7)
 * Remove `Sidekiq::DeadSet#kill` extension.

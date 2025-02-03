@@ -86,7 +86,7 @@ module Sidekiq
       end
 
       def class_to_str(class_or_string)
-        class_or_string.is_a?(String) ? class_or_string : class_or_string.name
+        (class_or_string.is_a?(String) ? class_or_string : class_or_string.name).strip
       end
 
       private
