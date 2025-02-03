@@ -57,12 +57,31 @@ RSpec.describe Sidekiq::Killswitch do
         expect(redis.hget(Sidekiq::Killswitch::BLACKHOLE_WORKERS_KEY_NAME, 'AnotherWorker')).to eq(time_now.to_s)
       end
     end
+
+    it 'trims whitespaces off worker names' do
+      time_now = stub_time_now
+
+      Sidekiq::Killswitch.blackhole_add_worker("   #{worker_name}   ")
+
+      Sidekiq::Killswitch.redis_pool do |redis|
+        expect(redis.hget(Sidekiq::Killswitch::BLACKHOLE_WORKERS_KEY_NAME, worker_name)).to eq(time_now.to_s)
+      end
+    end
   end
 
   describe '.blackhole_remove_worker' do
     it 'should remove worker from the list of blackholed workers' do
       Sidekiq::Killswitch.blackhole_add_worker(worker_name)
       Sidekiq::Killswitch.blackhole_remove_worker(worker_name)
+
+      Sidekiq::Killswitch.redis_pool do |redis|
+        expect(redis.hexists(Sidekiq::Killswitch::BLACKHOLE_WORKERS_KEY_NAME, worker_name)).to eq(0)
+      end
+    end
+
+    it 'trims whitespaces off worker names' do
+      Sidekiq::Killswitch.blackhole_add_worker(worker_name)
+      Sidekiq::Killswitch.blackhole_remove_worker("   #{worker_name}   ")
 
       Sidekiq::Killswitch.redis_pool do |redis|
         expect(redis.hexists(Sidekiq::Killswitch::BLACKHOLE_WORKERS_KEY_NAME, worker_name)).to eq(0)
@@ -105,12 +124,31 @@ RSpec.describe Sidekiq::Killswitch do
         expect(redis.hget(Sidekiq::Killswitch::DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)).to eq(time_now.to_s)
       end
     end
+
+    it 'trims whitespaces off worker names' do
+      time_now = stub_time_now
+
+      Sidekiq::Killswitch.dead_queue_add_worker("   #{worker_name}   ")
+
+      Sidekiq::Killswitch.redis_pool do |redis|
+        expect(redis.hget(Sidekiq::Killswitch::DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)).to eq(time_now.to_s)
+      end
+    end
   end
 
   describe '.dead_queue_remove_worker' do
     it 'should remove worker from the list of dead queue workers' do
       Sidekiq::Killswitch.dead_queue_add_worker(worker_name)
       Sidekiq::Killswitch.dead_queue_remove_worker(worker_name)
+
+      Sidekiq::Killswitch.redis_pool do |redis|
+        expect(redis.hexists(Sidekiq::Killswitch::DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)).to eq(0)
+      end
+    end
+
+    it 'trims whitespaces off worker names' do
+      Sidekiq::Killswitch.dead_queue_add_worker(worker_name)
+      Sidekiq::Killswitch.dead_queue_remove_worker("   #{worker_name}   ")
 
       Sidekiq::Killswitch.redis_pool do |redis|
         expect(redis.hexists(Sidekiq::Killswitch::DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)).to eq(0)
