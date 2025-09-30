@@ -16,7 +16,11 @@ module Sidekiq
       end
 
       def self.registered(app)
-        Sidekiq::WebApplication.helpers Helpers
+        if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new("8")
+          Sidekiq::Web::Application.helpers Helpers
+        else
+          Sidekiq::WebApplication.helpers Helpers
+        end
 
         app.get '/kill-switches' do
           @worker_name_invalid = session.delete(:worker_name_invalid)
@@ -57,6 +61,16 @@ module Sidekiq
 end
 
 require 'sidekiq/web' unless defined?(Sidekiq::Web)
-Sidekiq::Web.register(Sidekiq::Killswitch::Web)
-Sidekiq::Web.tabs['kill_switches'] = 'kill-switches'
+if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new("8")
+  Sidekiq::Web.configure do |config|
+    config.register_extension(Sidekiq::Killswitch::Web,
+    name: "kill_switches",
+    tab: ["Kill Switches"],
+    index: ["kill-switches"]
+    )
+  end
+else
+  Sidekiq::Web.register(Sidekiq::Killswitch::Web)
+  Sidekiq::Web.tabs['kill_switches'] = 'kill-switches'
+end
 Sidekiq::Web.locales << File.expand_path(File.dirname(__FILE__) + '/../../../web/locales')
