@@ -79,6 +79,20 @@ module Sidekiq
         end
       end
 
+      # Returns [dead_queue?, blackhole?] for the worker with one Redis round trip.
+      def kill_switches_for(worker_name)
+        worker_name = class_to_str(worker_name)
+
+        dead_queue, blackhole = redis_pool do |redis|
+          redis.pipelined do |pipeline|
+            pipeline.hexists(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)
+            pipeline.hexists(BLACKHOLE_WORKERS_KEY_NAME, worker_name)
+          end
+        end
+
+        [is_true_compat(dead_queue), is_true_compat(blackhole)]
+      end
+
       def dead_queue_workers
         redis_pool do |redis|
           redis.hgetall(DEAD_QUEUE_WORKERS_KEY_NAME)
