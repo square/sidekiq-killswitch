@@ -30,8 +30,10 @@ module Sidekiq
         worker_name = class_to_str(worker_name)
 
         redis_pool do |redis|
-          redis.hset(BLACKHOLE_WORKERS_KEY_NAME, worker_name, Time.now.to_s)
-          redis.publish(Listener::CHANNEL, 'changed')
+          redis.pipelined do |pipeline|
+            pipeline.hset(BLACKHOLE_WORKERS_KEY_NAME, worker_name, Time.now.to_s)
+            Listener.publish(pipeline, redis_db(redis))
+          end
         end
         logger.warn "#{worker_name} added to blackhole workers"
       end
@@ -40,8 +42,10 @@ module Sidekiq
         worker_name = class_to_str(worker_name)
 
         redis_pool do |redis|
-          redis.hdel(BLACKHOLE_WORKERS_KEY_NAME, worker_name)
-          redis.publish(Listener::CHANNEL, 'changed')
+          redis.pipelined do |pipeline|
+            pipeline.hdel(BLACKHOLE_WORKERS_KEY_NAME, worker_name)
+            Listener.publish(pipeline, redis_db(redis))
+          end
         end
         logger.warn "#{worker_name} removed from blackhole workers"
       end
@@ -65,8 +69,10 @@ module Sidekiq
         worker_name = class_to_str(worker_name)
 
         redis_pool do |redis|
-          redis.hset(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name, Time.now.to_s)
-          redis.publish(Listener::CHANNEL, 'changed')
+          redis.pipelined do |pipeline|
+            pipeline.hset(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name, Time.now.to_s)
+            Listener.publish(pipeline, redis_db(redis))
+          end
         end
         logger.warn "#{worker_name} added to dead queue workers"
       end
@@ -75,8 +81,10 @@ module Sidekiq
         worker_name = class_to_str(worker_name)
 
         redis_pool do |redis|
-          redis.hdel(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)
-          redis.publish(Listener::CHANNEL, 'changed')
+          redis.pipelined do |pipeline|
+            pipeline.hdel(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)
+            Listener.publish(pipeline, redis_db(redis))
+          end
         end
         logger.warn "#{worker_name} removed from dead queue workers"
       end
@@ -117,6 +125,15 @@ module Sidekiq
       end
 
       private
+
+      # Sidekiq 7+ wraps redis-client, which has #config. The redis gem has #connection.
+      def redis_db(redis)
+        if defined?(Sidekiq::RedisClientAdapter::CompatClient) && redis.is_a?(Sidekiq::RedisClientAdapter::CompatClient)
+          redis.config.db
+        else
+          redis.connection[:db]
+        end
+      end
 
       def is_true_compat(redis_result_value)
         # Compatibility method for `redis` and `redis-client`.
