@@ -16,6 +16,7 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.before do
     Sidekiq::Killswitch.redis_pool { |c| c.flushdb }
+    Sidekiq::Killswitch::Listener.clear
   end
 end
 
