@@ -42,6 +42,13 @@ RSpec.describe Sidekiq::Killswitch::Middleware::Server do
         expect(checkpoint).to receive(:check)
         server_middleware.call(MyWorker.new, {}, nil) { checkpoint.check }
       end
+
+      it 'should make one Redis call and not serialize the job' do
+        expect(Sidekiq).to receive(:redis).once.and_call_original
+        expect(Sidekiq).not_to receive(:dump_json)
+
+        server_middleware.call(MyWorker.new, {}, nil) { nil }
+      end
     end
   end
 end

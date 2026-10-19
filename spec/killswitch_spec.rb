@@ -167,6 +167,27 @@ RSpec.describe Sidekiq::Killswitch do
     end
   end
 
+  describe '.kill_switches_for' do
+    it 'should return the dead queue switch' do
+      Sidekiq::Killswitch.dead_queue_add_worker(worker_name)
+      expect(Sidekiq::Killswitch.kill_switches_for(worker_name)).to eq([true, false])
+    end
+
+    it 'should return the blackhole switch' do
+      Sidekiq::Killswitch.blackhole_add_worker(worker_name)
+      expect(Sidekiq::Killswitch.kill_switches_for(worker_name)).to eq([false, true])
+    end
+
+    it 'should return false for workers that are not marked' do
+      expect(Sidekiq::Killswitch.kill_switches_for(worker_name)).to eq([false, false])
+    end
+
+    it 'should check both switches in one Redis call' do
+      expect(Sidekiq).to receive(:redis).once.and_call_original
+      Sidekiq::Killswitch.kill_switches_for(worker_name)
+    end
+  end
+
   describe '.dead_queue_workers' do
     it 'should return a list of all dead queue workers with "added at" timestamps' do
       first_worker_added_at = stub_time_now

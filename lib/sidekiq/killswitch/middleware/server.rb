@@ -7,13 +7,14 @@ module Sidekiq
         include Sidekiq::ServerMiddleware
 
         def call(worker, job, _queue)
-          serialized_job = Sidekiq.dump_json(job)
+          dead_queue, blackhole = Killswitch.kill_switches_for(worker.class)
 
-          if Killswitch.dead_queue_worker?(worker.class)
+          if dead_queue
+            serialized_job = Sidekiq.dump_json(job)
             DeadSet.new.kill(serialized_job)
             Killswitch.logger.warn "#{worker.class.name} marked as dead queue worker. Job #{serialized_job} was killed."
-          elsif Killswitch.blackhole_worker?(worker.class)
-            Killswitch.logger.warn "#{worker.class.name} is currently disabled. Job #{serialized_job} was not executed."
+          elsif blackhole
+            Killswitch.logger.warn "#{worker.class.name} is currently disabled. Job #{Sidekiq.dump_json(job)} was not executed."
           else
             yield
           end
