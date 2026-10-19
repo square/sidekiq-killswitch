@@ -182,6 +182,14 @@ RSpec.describe Sidekiq::Killswitch do
       expect(Sidekiq::Killswitch.kill_switches_for(worker_name)).to eq([false, false])
     end
 
+    it 'should publish a change with the Redis database number in the same pipeline as the write' do
+      db = Sidekiq.redis { |c| c.config.db }
+      expect(Sidekiq::Killswitch::Listener).to receive(:publish).with(anything, db).and_call_original
+      expect(Sidekiq).to receive(:redis).once.and_call_original
+
+      Sidekiq::Killswitch.blackhole_add_worker(worker_name)
+    end
+
     it 'should check both switches in one Redis call' do
       expect(Sidekiq).to receive(:redis).once.and_call_original
       Sidekiq::Killswitch.kill_switches_for(worker_name)

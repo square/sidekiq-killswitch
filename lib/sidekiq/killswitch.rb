@@ -2,6 +2,7 @@
 require 'sidekiq/killswitch/config'
 require 'sidekiq/killswitch/middleware/server'
 require 'sidekiq/killswitch/middleware/client'
+require 'sidekiq/killswitch/listener'
 
 module Sidekiq
   module Killswitch
@@ -29,7 +30,10 @@ module Sidekiq
         worker_name = class_to_str(worker_name)
 
         redis_pool do |redis|
-          redis.hset(BLACKHOLE_WORKERS_KEY_NAME, worker_name, Time.now.to_s)
+          redis.pipelined do |pipeline|
+            pipeline.hset(BLACKHOLE_WORKERS_KEY_NAME, worker_name, Time.now.to_s)
+            Listener.publish(pipeline, redis_db(redis))
+          end
         end
         logger.warn "#{worker_name} added to blackhole workers"
       end
@@ -38,12 +42,18 @@ module Sidekiq
         worker_name = class_to_str(worker_name)
 
         redis_pool do |redis|
-          redis.hdel(BLACKHOLE_WORKERS_KEY_NAME, worker_name)
+          redis.pipelined do |pipeline|
+            pipeline.hdel(BLACKHOLE_WORKERS_KEY_NAME, worker_name)
+            Listener.publish(pipeline, redis_db(redis))
+          end
         end
         logger.warn "#{worker_name} removed from blackhole workers"
       end
 
       def blackhole_worker?(worker_name)
+        cached = Listener.fresh_switches
+        return cached.blackhole.include?(class_to_str(worker_name)) if cached
+
         redis_pool do |redis|
           is_true_compat(redis.hexists(BLACKHOLE_WORKERS_KEY_NAME, class_to_str(worker_name)))
         end
@@ -59,7 +69,10 @@ module Sidekiq
         worker_name = class_to_str(worker_name)
 
         redis_pool do |redis|
-          redis.hset(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name, Time.now.to_s)
+          redis.pipelined do |pipeline|
+            pipeline.hset(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name, Time.now.to_s)
+            Listener.publish(pipeline, redis_db(redis))
+          end
         end
         logger.warn "#{worker_name} added to dead queue workers"
       end
@@ -68,20 +81,28 @@ module Sidekiq
         worker_name = class_to_str(worker_name)
 
         redis_pool do |redis|
-          redis.hdel(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)
+          redis.pipelined do |pipeline|
+            pipeline.hdel(DEAD_QUEUE_WORKERS_KEY_NAME, worker_name)
+            Listener.publish(pipeline, redis_db(redis))
+          end
         end
         logger.warn "#{worker_name} removed from dead queue workers"
       end
 
       def dead_queue_worker?(worker_name)
+        cached = Listener.fresh_switches
+        return cached.dead_queue.include?(class_to_str(worker_name)) if cached
+
         redis_pool do |redis|
           is_true_compat(redis.hexists(DEAD_QUEUE_WORKERS_KEY_NAME, class_to_str(worker_name)))
         end
       end
 
-      # Returns [dead_queue?, blackhole?] for the worker with one Redis round trip.
+      # Returns [dead_queue?, blackhole?] for the worker, from the listener's cache or with one Redis round trip.
       def kill_switches_for(worker_name)
         worker_name = class_to_str(worker_name)
+        cached = Listener.fresh_switches
+        return cached.for(worker_name) if cached
 
         dead_queue, blackhole = redis_pool do |redis|
           redis.pipelined do |pipeline|
@@ -104,6 +125,15 @@ module Sidekiq
       end
 
       private
+
+      # Sidekiq 7+ wraps redis-client, which has #config. The redis gem has #connection.
+      def redis_db(redis)
+        if defined?(Sidekiq::RedisClientAdapter::CompatClient) && redis.is_a?(Sidekiq::RedisClientAdapter::CompatClient)
+          redis.config.db
+        else
+          redis.connection[:db]
+        end
+      end
 
       def is_true_compat(redis_result_value)
         # Compatibility method for `redis` and `redis-client`.

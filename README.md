@@ -101,6 +101,20 @@ Sidekiq.configure_client do |config|
 end
 ```
 
+Optional, Sidekiq 7 and later: keep the switches in memory in each Sidekiq server process, so a job
+check makes no Redis call. This follows Sidekiq Pro's queue pause. Each switch change publishes the
+Redis database number to the `sidekiq.killswitch` channel, in the same pipeline as the write. A
+listener thread, built at startup with its own Redis connection, loads both lists on start, on each
+message for its database, after a reconnect and every 30 seconds. After 30 quiet seconds it also
+sends a `PING`, so it finds a dropped connection. If the cached lists are older than 90 seconds, the
+checks read Redis.
+```ruby
+# In your config/initializers/sidekiq.rb
+Sidekiq.configure_server do |config|
+  Sidekiq::Killswitch::Listener.register(config)
+end
+```
+
 Load Killswitch Sidekiq Web UI extension: 
 1. Find a file where you `require 'sidekiq/web'`
 2. Add `require 'sidekiq/killswitch/web'` after that line.
