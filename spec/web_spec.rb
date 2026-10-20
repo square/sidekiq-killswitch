@@ -3,6 +3,9 @@ require 'spec_helper'
 require 'rspec-html-matchers'
 require 'sidekiq/killswitch/web'
 
+# Sidekiq 8.0 checks a CSRF token on POST unless this is off, and it ignores RACK_ENV.
+Sidekiq::Web.configure { |config| config[:csrf] = false }
+
 RSpec.describe Sidekiq::Killswitch::Web do
   include Rack::Test::Methods
   include RSpecHtmlMatchers
@@ -13,6 +16,8 @@ RSpec.describe Sidekiq::Killswitch::Web do
     # Hash is not a real session, but it seems to provide a session-compatible interface,
     # and we're only using #[] and #delete methods.
     env "rack.session", {}
+    # Sidekiq 8.1 accepts a POST only from the same origin.
+    header 'Sec-Fetch-Site', 'same-origin'
   end
 
   def expect_redirect_to_root_page(response)

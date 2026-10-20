@@ -1,7 +1,8 @@
 AllCops:
-  TargetRubyVersion: 2.3
-  TargetRailsVersion: 4.7
+  TargetRubyVersion: 3.2
   DisplayCopNames: true
+  NewCops: disable
+  SuggestExtensions: false
   Exclude:
     - tmp/**/*
     - vendor/**/*
@@ -15,11 +16,11 @@ Bundler/OrderedGems:
 
 Layout/AccessModifierIndentation:
   Enabled: false
-Layout/AlignArray:
+Layout/ArrayAlignment:
   Enabled: false
-Layout/AlignHash:
+Layout/HashAlignment:
   Enabled: false
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   Enabled: false
 Layout/BlockEndNewline:
   Enabled: false
@@ -70,15 +71,15 @@ Layout/FirstMethodParameterLineBreak:
   Enabled: false
 Layout/FirstParameterIndentation:
   Enabled: false
-Layout/IndentArray:
+Layout/FirstArrayElementIndentation:
   Enabled: true
   EnforcedStyle: consistent
-Layout/IndentAssignment:
+Layout/AssignmentIndentation:
   Enabled: false
-Layout/IndentHash:
+Layout/FirstHashElementIndentation:
   Enabled: false
   EnforcedStyle: consistent
-Layout/IndentHeredoc:
+Layout/HeredocIndentation:
   Enabled: false
 Layout/IndentationConsistency:
   Enabled: true
@@ -143,7 +144,7 @@ Layout/SpaceInsideArrayPercentLiteral:
   Enabled: false
 Layout/SpaceInsideBlockBraces:
   Enabled: true
-Layout/SpaceInsideBrackets:
+Layout/SpaceInsideArrayLiteralBrackets:
   Enabled: true
 Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
@@ -156,9 +157,9 @@ Layout/SpaceInsideRangeLiteral:
 Layout/SpaceInsideStringInterpolation:
   Enabled: true
   EnforcedStyle: no_space
-Layout/Tab:
+Layout/IndentationStyle:
   Enabled: true
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
   Enabled: true
 Layout/TrailingWhitespace:
   Enabled: true
@@ -172,15 +173,15 @@ Lint/AmbiguousRegexpLiteral:
   Enabled: true
 Lint/AssignmentInCondition:
   Enabled: false
-Lint/BlockAlignment:
+Layout/BlockAlignment:
   Enabled: true
 Lint/CircularArgumentReference:
   Enabled: true
-Lint/ConditionPosition:
+Layout/ConditionPosition:
   Enabled: true
 Lint/Debugger:
   Enabled: true
-Lint/DefEndAlignment:
+Layout/DefEndAlignment:
   Enabled: true
 Lint/DeprecatedClassMethods:
   Enabled: true
@@ -188,7 +189,7 @@ Lint/DuplicateCaseCondition:
   Enabled: true
 Lint/DuplicateMethods:
   Enabled: true
-Lint/DuplicatedKey:
+Lint/DuplicateHashKey:
   Enabled: true
 Lint/EachWithObjectArgument:
   Enabled: true
@@ -202,19 +203,17 @@ Lint/EmptyInterpolation:
   Enabled: true
 Lint/EmptyWhen:
   Enabled: true
-Lint/EndAlignment:
+Layout/EndAlignment:
   Enabled: true
   EnforcedStyleAlignWith: variable
   AutoCorrect: true
-Lint/EndInMethod:
-  Enabled: true
 Lint/EnsureReturn:
   Enabled: true
 Lint/FloatOutOfRange:
   Enabled: true
 Lint/FormatParameterMismatch:
   Enabled: true
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Enabled: false
 Lint/ImplicitStringConcatenation:
   Enabled: true
@@ -222,15 +221,13 @@ Lint/IneffectiveAccessModifier:
   Enabled: false
 Lint/InheritException:
   Enabled: true
-Lint/InvalidCharacterLiteral:
-  Enabled: true
-Lint/LiteralInCondition:
+Lint/LiteralAsCondition:
   Enabled: true
 Lint/LiteralInInterpolation:
   Enabled: true
 Lint/Loop:
   Enabled: false
-Lint/MultipleCompare:
+Lint/MultipleComparison:
   Enabled: true
 Lint/NestedMethodDefinition:
   Enabled: true
@@ -260,15 +257,15 @@ Lint/ShadowedException:
   Enabled: true
 Lint/ShadowingOuterLocalVariable:
   Enabled: true
-Lint/StringConversionInInterpolation:
+Lint/RedundantStringCoercion:
   Enabled: true
 Lint/UnderscorePrefixedVariableName:
   Enabled: true
 Lint/UnifiedInteger:
   Enabled: true
-Lint/UnneededDisable:
+Lint/RedundantCopDisableDirective:
   Enabled: true
-Lint/UnneededSplatExpansion:
+Lint/RedundantSplatExpansion:
   Enabled: true
 Lint/UnreachableCode:
   Enabled: true
@@ -283,7 +280,7 @@ Lint/UselessAssignment:
   Exclude:
     - 'config/compass.rb'
     - 'spec/fabrication_helper.rb'
-Lint/UselessComparison:
+Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 Lint/UselessElseWithoutRescue:
   Enabled: true
@@ -303,7 +300,7 @@ Metrics/ClassLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Enabled: false
@@ -312,60 +309,6 @@ Metrics/ModuleLength:
 Metrics/ParameterLists:
   Enabled: false
 Metrics/PerceivedComplexity:
-  Enabled: false
-
-
-Performance/Caller:
-  Enabled: false
-Performance/CaseWhenSplat:
-  Enabled: false
-Performance/Casecmp:
-  Enabled: false
-Performance/CompareWithBlock:
-  Enabled: false
-Performance/Count:
-  Enabled: false
-Performance/Detect:
-  Enabled: false
-Performance/DoubleStartEndWith:
-  Enabled: false
-Performance/EndWith:
-  Enabled: false
-Performance/FixedSize:
-  Enabled: false
-Performance/FlatMap:
-  Enabled: false
-Performance/HashEachMethods:
-  Enabled: false
-Performance/LstripRstrip:
-  Enabled: false
-Performance/RangeInclude:
-  Enabled: false
-Performance/RedundantBlockCall:
-  Enabled: false
-Performance/RedundantMatch:
-  Enabled: false
-Performance/RedundantMerge:
-  Enabled: false
-Performance/RedundantSortBy:
-  Enabled: false
-Performance/RegexpMatch:
-  Enabled: false
-Performance/ReverseEach:
-  Enabled: false
-Performance/Sample:
-  Enabled: false
-Performance/Size:
-  Enabled: false
-Performance/StartWith:
-  Enabled: false
-Performance/StringReplacement:
-  Enabled: false
-Performance/TimesMap:
-  Enabled: false
-
-
-Rails:
   Enabled: false
 
 
@@ -379,7 +322,7 @@ Security/YAMLLoad:
   Enabled: true
 
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Enabled: false
 Style/Alias:
   Enabled: false
@@ -389,7 +332,7 @@ Style/ArrayJoin:
   Enabled: true
 Style/AsciiComments:
   Enabled: false
-Style/AsciiIdentifiers:
+Naming/AsciiIdentifiers:
   Enabled: true
 Style/Attr:
   Enabled: false
@@ -403,14 +346,11 @@ Style/BlockComments:
   Enabled: false
 Style/BlockDelimiters:
   Enabled: false
-Style/BracesAroundHashParameters:
-  Enabled: false
-  EnforcedStyle: no_braces
 Style/CaseEquality:
   Enabled: false
 Style/CharacterLiteral:
   Enabled: false
-Style/ClassAndModuleCamelCase:
+Naming/ClassAndModuleCamelCase:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
@@ -430,7 +370,7 @@ Style/CommentAnnotation:
   Enabled: false
 Style/ConditionalAssignment:
   Enabled: false
-Style/ConstantName:
+Naming/ConstantName:
   Enabled: false
 Style/Copyright:
   Enabled: false
@@ -461,9 +401,9 @@ Style/EndBlock:
   Enabled: false
 Style/EvenOdd:
   Enabled: false
-Style/FileName:
+Naming/FileName:
   Enabled: true
-Style/FlipFlop:
+Lint/FlipFlop:
   Enabled: false
 Style/For:
   Enabled: false
@@ -514,9 +454,11 @@ Style/MethodCalledOnDoEndBlock:
   Enabled: false
 Style/MethodDefParentheses:
   Enabled: true
-Style/MethodMissing:
+Style/MissingRespondToMissing:
   Enabled: false
-Style/MethodName:
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+Naming/MethodName:
   Enabled: true
   EnforcedStyle: snake_case
 Style/MissingElse:
@@ -565,7 +507,7 @@ Style/NumericPredicate:
   Enabled: false
 Style/OneLineConditional:
   Enabled: false
-Style/OpMethod:
+Naming/BinaryOperatorParameterName:
   Enabled: false
 Style/OptionHash:
   Enabled: false
@@ -581,7 +523,7 @@ Style/PercentQLiterals:
   Enabled: false
 Style/PerlBackrefs:
   Enabled: false
-Style/PredicateName:
+Naming/PredicatePrefix:
   Enabled: false
 Style/PreferredHashMethods: # Nice to have?
   Enabled: true
@@ -642,7 +584,7 @@ Style/TernaryParentheses:
   Enabled: false
 Style/TrailingCommaInArguments:
   Enabled: false
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
   Enabled: false
 Style/TrailingUnderscoreVariable:
   Enabled: false
@@ -653,17 +595,17 @@ Style/TrivialAccessors:
   ExactNameMatch: true
 Style/UnlessElse:
   Enabled: false
-Style/UnneededCapitalW:
+Style/RedundantCapitalW:
   Enabled: false
-Style/UnneededInterpolation:
+Style/RedundantInterpolation:
   Enabled: false
-Style/UnneededPercentQ:
+Style/RedundantPercentQ:
   Enabled: false
 Style/VariableInterpolation:
   Enabled: false
-Style/VariableName:
+Naming/VariableName:
   Enabled: false
-Style/VariableNumber:
+Naming/VariableNumber:
   Enabled: false
 Style/WhenThen:
   Enabled: false

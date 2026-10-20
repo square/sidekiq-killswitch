@@ -126,13 +126,8 @@ module Sidekiq
 
       private
 
-      # Sidekiq 7+ wraps redis-client, which has #config. The redis gem has #connection.
       def redis_db(redis)
-        if defined?(Sidekiq::RedisClientAdapter::CompatClient) && redis.is_a?(Sidekiq::RedisClientAdapter::CompatClient)
-          redis.config.db
-        else
-          redis.connection[:db]
-        end
+        redis.config.db
       end
 
       def is_true_compat(redis_result_value)
